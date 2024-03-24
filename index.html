@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quote Search Engine</title>
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> <!-- Make sure this path is correct -->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quote Search Engine</h1>
+            <h2>But...Molded For The Disciples of History</h2> <!-- Changed to h2 for semantic hierarchy -->
+            <h3>Created by Magic Man</h3>
+        </header>
+        <div class="search-box">
+            <form id="searchForm">
+                <input type="text" id="query" name="query" placeholder="Enter search terms...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').onsubmit = function(event) {
+            event.preventDefault();
+            var formData = new FormData(document.getElementById('searchForm'));
+            fetch('/search', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = ''; // Clear previous results
+                data.results.forEach(result => {
+                    const div = document.createElement('div');
+                    div.className = 'result-item'; // Add a class for styling individual results if needed
+                    div.innerHTML = `<p><b>${result.author}</b></p><p>${result.quote}</p>`;
+                    resultsDiv.appendChild(div);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        };
+    </script>
+</body>
+</html>
